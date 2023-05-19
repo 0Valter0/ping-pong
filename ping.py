@@ -48,22 +48,31 @@ platform_r = Player('platform_r.png', 650, 50, 20, 100, 10, 4, 4)
 ball = Enemy('ball.png', 200, 100, 50, 50, 5, 4, 4)
 win_width = 700
 win_height = 500
-font_1 = font.Font(None, 35)
-lose_1 = font_1.render('PLAYER 2 WIN', True, (180, 0, 0))
-lose_2 = font_1.render('PLAYER 1 WIN', True, (180, 0, 0))
 back = transform.scale(image.load("background.jpg"), (win_width, win_height)) 
 main_win = display.set_mode((win_width, win_height))
 clock = time.Clock()
 
+font_1 = font.Font(None, 35)
+font_2 = font.Font(None, 25)
+lose_1 = font_1.render('PLAYER 2 WIN', True, (180, 0, 0))
+lose_2 = font_1.render('PLAYER 1 WIN', True, (180, 0, 0))
+
+lost_l = 0
+lost_r = 0
+
+
+
 run = True
-finish = False    
+finish = False
 while run:
+    main_win.blit(back, (0, 0))
+    
     for e in event.get():
         if e.type == QUIT:
             run = False
 
     if not finish:
-        main_win.blit(back, (0, 0)) 
+        
         
         platform_l.reset()
         platform_l.update_l()
@@ -73,11 +82,30 @@ while run:
         
         ball.reset()
         ball.update()
+
+        lost_r_text = font_2.render('Очков:' + str(lost_r), True, (180, 0, 0))
+        lost_l_text = font_2.render('Очков:' + str(lost_l), True, (180, 0, 0))
+         
+        main_win.blit(lost_r_text, (630, 20))
+        main_win.blit(lost_l_text, (10, 20))
+
         if ball.rect.x < 0:
-            run = False
-            main_win.blit(lose_1, (200, 200))
+            ball.rect.x, ball.rect.y = 200, 100
+            ball.speed_x *= -1
+            lost_r += 1
+            
         if ball.rect.x > 650:
-            run = False
+            ball.rect.x, ball.rect.y = 600, 100
+            ball.speed_x *= -1
+            lost_l += 1
+
+        if lost_l >= 3:
             main_win.blit(lose_2, (200, 200))
+            run = False
+            
+        if lost_r >= 3:
+            main_win.blit(lose_1, (200, 200))
+            run = False 
+
         display.update()
-    clock.tick(60) 
+        clock.tick(60) 
