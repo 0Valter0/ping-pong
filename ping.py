@@ -1,5 +1,5 @@
 from pygame import *
-
+font.init()
 class GameSprite(sprite.Sprite):
     def __init__(self, player_image, player_x, player_y, player_weight, player_hight, player_speed, player_speed_x, player_speed_y):
         super().__init__()
@@ -48,7 +48,9 @@ platform_r = Player('platform_r.png', 650, 50, 20, 100, 10, 4, 4)
 ball = Enemy('ball.png', 200, 100, 50, 50, 5, 4, 4)
 win_width = 700
 win_height = 500
-
+font_1 = font.Font(None, 35)
+lose_1 = font_1.render('PLAYER 2 WIN', True, (180, 0, 0))
+lose_2 = font_1.render('PLAYER 1 WIN', True, (180, 0, 0))
 back = transform.scale(image.load("background.jpg"), (win_width, win_height)) 
 main_win = display.set_mode((win_width, win_height))
 clock = time.Clock()
@@ -71,6 +73,11 @@ while run:
         
         ball.reset()
         ball.update()
-
+        if ball.rect.x < 0:
+            run = False
+            main_win.blit(lose_1, (200, 200))
+        if ball.rect.x > 650:
+            run = False
+            main_win.blit(lose_2, (200, 200))
         display.update()
-    clock.tick(60)       
+    clock.tick(60) 
